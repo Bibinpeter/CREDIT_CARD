@@ -1,4 +1,5 @@
 import 'package:creditcard/constants/app_colors.dart';
+import 'package:creditcard/functions/functions.dart';
 import 'package:creditcard/theme/darktheme.dart';
 import 'package:creditcard/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class MySampleState extends State<MySample> {
       width: 2.0,
     ),
   );
+  final glassConfig = GlassmorphismUtil.getGlassmorphismConfig();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -71,36 +73,26 @@ class MySampleState extends State<MySample> {
                     ),
                     CreditCardWidget(
                       enableFloatingCard: useFloatingAnimation,
-                      glassmorphismConfig: getGlassmorphismConfig(),
+                      glassmorphismConfig: glassConfig,
                       cardNumber: cardNumber,
                       expiryDate: expiryDate,
                       cardHolderName: cardHolderName,
                       cvvCode: cvvCode,
                       bankName: 'Axis Bank',
-                      frontCardBorder: useGlassMorphism
-                          ? null
-                          : Border.all(color: Colors.grey),
-                      backCardBorder: useGlassMorphism
-                          ? null
-                          : Border.all(color: Colors.grey),
+                      frontCardBorder: useGlassMorphism? null: Border.all(color: Colors.grey),
+                      backCardBorder: useGlassMorphism? null: Border.all(color: Colors.grey),
                       showBackView: isCvvFocused,
                       obscureCardNumber: true,
                       obscureCardCvv: true,
                       isHolderNameVisible: true,
-                      cardBgColor: isLightTheme
-                          ? AppColors.cardBgLightColor
-                          : AppColors.cardBgColor,
-                      backgroundImage: useBackgroundImage
-                          ? 'assets/images/card_bg.png'
-                          : null,
+                      cardBgColor: isLightTheme ? AppColors.cardBgLightColor: AppColors.cardBgColor,
+                      backgroundImage: useBackgroundImage ? 'assets/images/card_bg.png': null,
                       isSwipeGestureEnabled: true,
-                      onCreditCardWidgetChange:
-                          (CreditCardBrand creditCardBrand) {},
+                      onCreditCardWidgetChange:(CreditCardBrand creditCardBrand) {},
                       customCardTypeIcons: <CustomCardTypeIcon>[
                         CustomCardTypeIcon(
                           cardType: CardType.mastercard,
-                          cardImage: Image.asset(
-                            'assets/images/mastercard.png',
+                          cardImage: Image.asset('assets/images/mastercard.png',
                             height: 50,
                             width: 50,
                           ),
@@ -139,7 +131,7 @@ class MySampleState extends State<MySample> {
                                   labelText: 'Card Holder',
                                 ),
                               ),
-                             onCreditCardModelChange: onCreditCardModelChange,
+                              onCreditCardModelChange: onCreditCardModelChange,
                             ),
                             const SizedBox(height: 20),
                             Padding(
@@ -203,47 +195,29 @@ class MySampleState extends State<MySample> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            GestureDetector(
-                              onTap: onValidate,
-                              child: Stack(
-                                children: [
-                                  Center(
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      decoration: const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: <Color>[
-                                            AppColors.colorB58D67,
-                                            AppColors.colorB58D67,
-                                            AppColors.colorE5D1B2,
-                                            AppColors.colorF9EED2,
-                                            AppColors.colorEFEFED,
-                                            AppColors.colorF9EED2,
-                                            AppColors.colorB58D67,
-                                          ],
-                                          begin: Alignment(-1, -3),
-                                          end: Alignment(1, 1),
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(19)),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15),
-                                      alignment: Alignment.center,
-                                      child: const Text(
-                                        'Validate',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'halter',
-                                          fontSize: 14,
-                                           package: 'flutter_credit_card', 
-                                        ),
+                            Stack(
+                              children: [
+                                Center(
+                                  child: GradientContainer(
+                                    onTap: () {
+                                      if (formKey.currentState?.validate() ?? false) {
+                                        //    print('valid!');
+                                      } else {
+                                        // print('invalid!');
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Validate',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontFamily: 'halter',
+                                        fontSize: 14,
+                                        package: 'flutter_credit_card',
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -257,31 +231,6 @@ class MySampleState extends State<MySample> {
         ),
       ),
     );
-  }
-
-  void onValidate() {
-    if (formKey.currentState?.validate() ?? false) {
-      print('valid!');
-    } else {
-      print('invalid!'); 
-    }
-  }
-
-  Glassmorphism? getGlassmorphismConfig() {
-    if (!useGlassMorphism) {
-      return null;
-    }
-
-    final LinearGradient gradient = LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: <Color>[Colors.grey.withAlpha(50), Colors.grey.withAlpha(50)],
-      stops: const <double>[0.3, 0],
-    );
-
-    return isLightTheme
-        ? Glassmorphism(blurX: 8.0, blurY: 16.0, gradient: gradient)
-        : Glassmorphism.defaultConfig();
   }
 
   void onCreditCardModelChange(CreditCardModel creditCardModel) {
